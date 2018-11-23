@@ -21,16 +21,14 @@ app.use(express.static(publicPath))
 io.on('connection', (socket) => {
    console.log('User connected')
 
-   // Send a new message to the client, with data in an object
-    socket.emit('newMessage', {
-        from: 'mike@example.com',
-        text: 'Hey sup!',
-        createdAt: 123
-    })
-
     // Listen for a message from a client, you will receive from, text and createdAt
     socket.on('createMessage', (message) => {
         console.log('createMessage:', message)
+        io.emit('newMessage', {
+            from: message.from,
+            text: message.text,
+            createdAt: new Date().getTime()
+        })
     })
 
     // Log something to the console when a user disconnects

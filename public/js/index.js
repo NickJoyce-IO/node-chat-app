@@ -4,11 +4,7 @@ const socket = io()
 socket.on('connect', () => {
     console.log('Connected to server')
 
-    // Send a message to the server, with the items in the object
-    socket.emit('createMessage', {
-        from: 'dave@example.com',
-        text: 'Hey wasson?'
-    })
+
 })
 
 // When disconnected from the server log to the console
