@@ -21,7 +21,23 @@ app.use(express.static(publicPath))
 io.on('connection', (socket) => {
    console.log('User connected')
 
-    // Listen for a message from a client, you will receive from, text and createdAt
+    // Admin welcome message to the newly conneted user
+   socket.emit('newMessage', {
+       from: 'Admin',
+       text: 'Welcome to the chat app',
+       createdAt: new Date().getTime()
+   })
+
+   // broadcast a message to everybody else to let them know a new user has joined
+   socket.broadcast.emit('newMessage', {
+        from: 'Admin',
+        text: 'New user joined',
+        createdAt: new Date().getTime()
+   })
+    
+   
+   // Listen for a message from a client, you will receive from, text and createdAt
+    // then rebroadcast that message to everybody using io.emit
     socket.on('createMessage', (message) => {
         console.log('createMessage:', message)
         io.emit('newMessage', {
@@ -29,6 +45,11 @@ io.on('connection', (socket) => {
             text: message.text,
             createdAt: new Date().getTime()
         })
+        // socket.broadcast.emit('newMessage', {
+        //     from: message.from,
+        //     text: message.text,
+        //     createdAt: new Date().getTime()
+        // })
     })
 
     // Log something to the console when a user disconnects
