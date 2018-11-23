@@ -10,21 +10,34 @@ const publicPath = path.join(__dirname, '../public')
 const app = express()
 const server = http.createServer(app)
 const port = process.env.PORT || 3000
+// socketio can't use app, must define in server
 const io = socketIO(server)
 
 
 // Configure middleware to use express as host
 app.use(express.static(publicPath))
 
+// Log something to the screen when a user is connected
 io.on('connection', (socket) => {
-   console.log('New user connected')
+   console.log('User connected')
 
+   // Send a new message to the client, with data in an object
+    socket.emit('newMessage', {
+        from: 'mike@example.com',
+        text: 'Hey sup!',
+        createdAt: 123
+    })
+
+    // Listen for a message from a client, you will receive from, text and createdAt
+    socket.on('createMessage', (message) => {
+        console.log('createMessage:', message)
+    })
+
+    // Log something to the console when a user disconnects
    socket.on('disconnect', () => {
        console.log('User is disconnected')
    })
 })
-
-
 
 
 // Tell the server to listen on the port set up
