@@ -3,6 +3,8 @@ const http = require('http')
 const express = require('express')
 const socketIO = require('socket.io')
 
+const {generateMessage} = require('./utils/message')
+
 
 // Set up public path to display web app pages
 const publicPath = path.join(__dirname, '../public')
@@ -22,29 +24,18 @@ io.on('connection', (socket) => {
    console.log('User connected')
 
     // Admin welcome message to the newly conneted user
-   socket.emit('newMessage', {
-       from: 'Admin',
-       text: 'Welcome to the chat app',
-       createdAt: new Date().getTime()
-   })
+   socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'))
 
    // broadcast a message to everybody else to let them know a new user has joined
-   socket.broadcast.emit('newMessage', {
-        from: 'Admin',
-        text: 'New user joined',
-        createdAt: new Date().getTime()
-   })
+   socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'))
     
    
-   // Listen for a message from a client, you will receive from, text and createdAt
+   // Listen for a message from a client, you will receive from and text
     // then rebroadcast that message to everybody using io.emit
     socket.on('createMessage', (message) => {
         console.log('createMessage:', message)
-        io.emit('newMessage', {
-            from: message.from,
-            text: message.text,
-            createdAt: new Date().getTime()
-        })
+        // sends the message back out
+        io.emit('newMessage', generateMessage(message.from, message.text))
         // socket.broadcast.emit('newMessage', {
         //     from: message.from,
         //     text: message.text,
