@@ -5,7 +5,6 @@ const socketIO = require('socket.io')
 
 const {generateMessage} = require('./utils/message')
 
-
 // Set up public path to display web app pages
 const publicPath = path.join(__dirname, '../public')
 
@@ -31,16 +30,14 @@ io.on('connection', (socket) => {
     
    
    // Listen for a message from a client, you will receive from and text
-    // then rebroadcast that message to everybody using io.emit
-    socket.on('createMessage', (message) => {
+    // then rebroadcast that message to everybody using io.emit a call back is configured
+    // to allow a message to be sent back from the server
+    socket.on('createMessage', (message, callback) => {
         console.log('createMessage:', message)
+        
         // sends the message back out
         io.emit('newMessage', generateMessage(message.from, message.text))
-        // socket.broadcast.emit('newMessage', {
-        //     from: message.from,
-        //     text: message.text,
-        //     createdAt: new Date().getTime()
-        // })
+        callback('This is from the server')
     })
 
     // Log something to the console when a user disconnects
