@@ -3,7 +3,7 @@ const http = require('http')
 const express = require('express')
 const socketIO = require('socket.io')
 
-const {generateMessage} = require('./utils/message')
+const {generateMessage, generateLocationMessage} = require('./utils/message')
 
 // Set up public path to display web app pages
 const publicPath = path.join(__dirname, '../public')
@@ -41,7 +41,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('createLocationMesssage', (coords) => {
-        io.emit('newMessage', generateMessage('Admin', `${coords.latitude}, ${coords.longitude}`))
+        io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude))
     })
 
     // Log something to the console when a user disconnects
