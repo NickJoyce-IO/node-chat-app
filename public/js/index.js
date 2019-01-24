@@ -15,22 +15,24 @@ socket.on('disconnect', () => {
 
 // Listen for a message from the server, an object will be retrieved
 socket.on('newMessage', (message) => {
+    const formattedTime = moment(message.createdAt).format('h:mm a')
     console.log('newMessage', message)
     
     // create the message to be displayed in a ol item
     // create the HTML element
     const li = jQuery('<li></li>')
     // append the text to the list tiem element
-    li.text(`${message.from}: ${message.text}`)
+    li.text(`${message.from} ${formattedTime}: ${message.text}`)
     // append the list item to the messages ol element
     jQuery('#messages').append(li)
 })
 
 socket.on('newLocationMessage', function(message) {
+    const formattedTime = moment(message.createdAt).format('h:mm a')
     const li = jQuery('<li></li>')
     const a = jQuery('<a target="_blank">My current location</a>')
 
-    li.text(`${message.from}: `)
+    li.text(`${message.from} ${formattedTime}: `)
     a.attr('href', message.url)
     li.append(a)
     jQuery('#messages').append(li)
