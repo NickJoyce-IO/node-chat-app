@@ -16,27 +16,27 @@ socket.on('disconnect', () => {
 // Listen for a message from the server, an object will be retrieved
 socket.on('newMessage', (message) => {
     const formattedTime = moment(message.createdAt).format('h:mm a')
-    console.log('newMessage', message)
+    const  template = jQuery('#message-template').html()
+    const html = Mustache.render(template,  {
+        text: message.text,
+        from: message.from,
+        createdAt: formattedTime
+    })
+
+    jQuery('#messages').append(html)
     
-    // create the message to be displayed in a ol item
-    // create the HTML element
-    const li = jQuery('<li></li>')
-    // append the text to the list tiem element
-    li.text(`${message.from} ${formattedTime}: ${message.text}`)
-    // append the list item to the messages ol element
-    jQuery('#messages').append(li)
 })
 
 socket.on('newLocationMessage', function(message) {
     const formattedTime = moment(message.createdAt).format('h:mm a')
-    const li = jQuery('<li></li>')
-    const a = jQuery('<a target="_blank">My current location</a>')
+    const template = jQuery('#location-message-template').html()
+    const html = Mustache.render(template, {
+        url: message.url,
+        from: message.from,
+        createdAt: formattedTime
+    })
 
-    li.text(`${message.from} ${formattedTime}: `)
-    a.attr('href', message.url)
-    li.append(a)
-    jQuery('#messages').append(li)
-
+    jQuery('#messages').append(html)
 })
 
 // When the submit button is pressed send out the 'createMessage' event to socketio server with 
