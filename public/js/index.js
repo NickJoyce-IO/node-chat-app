@@ -1,5 +1,24 @@
 const socket = io()
 
+// function to scroll
+
+const scrollToBottom = () => {
+// Selectors
+const messages = jQuery('#messages')
+const newMessage = messages.children('li:last-child')
+// Heights
+let clientHeight = messages.prop('clientHeight')
+let scrollTop = messages.prop('scrollTop')
+let scrollHeight = messages.prop('scrollHeight')
+let newMessageHeight = newMessage.innerHeight()
+let lastMessageHeight = newMessage.prev().innerHeight()
+
+if( clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+    messages.scrollTop(scrollHeight)
+}
+
+}
+
 // log to console when connection with server established
 socket.on('connect', () => {
     console.log('Connected to server')
@@ -24,6 +43,7 @@ socket.on('newMessage', (message) => {
     })
 
     jQuery('#messages').append(html)
+    scrollToBottom()
     
 })
 
@@ -37,6 +57,7 @@ socket.on('newLocationMessage', function(message) {
     })
 
     jQuery('#messages').append(html)
+    scrollToBottom()
 })
 
 // When the submit button is pressed send out the 'createMessage' event to socketio server with 
