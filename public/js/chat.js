@@ -22,9 +22,16 @@ if( clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHei
 // log to console when connection with server established
 socket.on('connect', () => {
     console.log('Connected to server')
+    const params = jQuery.deparam(window.location.search)
 
-    socket.emit('newUser')
-
+    socket.emit('join', params, (err) => {
+        if (err) {
+            alert(err)
+            window.location.href ='/'
+        } else {
+            console.log('No error')
+        }
+    })
 })
 
 // When disconnected from the server log to the console

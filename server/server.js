@@ -4,6 +4,7 @@ const express = require('express')
 const socketIO = require('socket.io')
 
 const {generateMessage, generateLocationMessage} = require('./utils/message')
+const {isRealString} = require('./utils/validation')
 
 // Set up public path to display web app pages
 const publicPath = path.join(__dirname, '../public')
@@ -22,12 +23,23 @@ app.use(express.static(publicPath))
 io.on('connection', (socket) => {
    console.log('User connected')
 
-    // Admin welcome message to the newly conneted user
-   socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'))
 
-   // broadcast a message to everybody else to let them know a new user has joined
-   socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'))
     
+   socket.on('join', (params, callback)=> {
+    if(!isRealString(params.name) || !isRealString(params.room)) {
+        callback('Name and room name are required')
+    }
+        socket.join(params.room)
+        
+       // Admin welcome message to the newly conneted user
+       socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'))
+
+       // broadcast a message to everybody else to let them know a new user has joined
+       socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined`))
+        
+
+        callback()
+   })
    
    // Listen for a message from a client, you will receive from and text
     // then rebroadcast that message to everybody using io.emit a call back is configured
