@@ -52,15 +52,30 @@ io.on('connection', (socket) => {
     // then rebroadcast that message to everybody using io.emit a call back is configured
     // to allow a message to be sent back from the server
     socket.on('createMessage', (message, callback) => {
-        console.log('createMessage:', message)
+        const user = users.getUser(socket.id)
+
+        if(user && isRealString(message.text)) {
+            // sends the message back out
+            io.to(user.room).emit('newMessage', generateMessage(user.name, message.text))
+        } else {
+            
+        }
         
-        // sends the message back out
-        io.emit('newMessage', generateMessage(message.from, message.text))
+        
+        
         callback()
     })
 
     socket.on('createLocationMesssage', (coords) => {
-        io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude))
+
+        const user = users.getUser(socket.id)
+
+        if(user) {
+            io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude))
+        } else {
+          
+        }
+        
     })
 
     // Log something to the console when a user disconnects
