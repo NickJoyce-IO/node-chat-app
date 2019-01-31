@@ -39,6 +39,16 @@ socket.on('disconnect', () => {
     console.log('Connection lost')
 })
 
+socket.on('updateUserList', (users) => {
+    const ol = jQuery('<ol></ol>')
+
+    users.forEach((user) => {
+        ol.append(jQuery('<li></li>').text(user))
+    })
+
+    jQuery('#users').html(ol)
+})
+
 // Listen for a message from the server, an object will be retrieved
 socket.on('newMessage', (message) => {
     const formattedTime = moment(message.createdAt).format('h:mm a')
